@@ -17,24 +17,24 @@ ChatClient.LongPoll = {
         return;
     },
     subscribe: function(callback) {
-        var longPoll = function() {
-            fetch("/messages").then(function(response) {
-              return response.json();
-            }).then(function(json) {
-              callback(json);
-              longPoll();
-            });
-        }
-        longPoll();
+        /////////////////////////////
+        // Q1: Long poll with fetch
+        // Long poll the URL "/messages", e.g. send pending GET requests to it
+        // using the fetch API. When you get a response, parse the response
+        // to JSON and then call the given callback function on the parsed data.
+        /////////////////////////////
+        // YOUR CODE HERE
+        /////////////////////////////
     },
     publish: function(data) {
-        fetch("/messages", {
-            method: "POST",
-            body: JSON.stringify(data),
-            headers: {
-              "content-type": "application/json",
-            },
-        });
+        /////////////////////////////
+        // Q2: POST request with fetch
+        // Given an object, POST the object to the URL "/messages"
+        // using the fetch API. Note that since our server does not support
+        // form data, you should format your payload as JSON instead.
+        /////////////////////////////
+        // YOUR CODE HERE
+        /////////////////////////////
     }
 }
 
