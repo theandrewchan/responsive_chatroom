@@ -2,7 +2,6 @@
 <html>
   <head>
     <title><%= title %></title>
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
     <link rel='stylesheet' href='/stylesheets/style.css' />
     <script src='/javascripts/chat-client.js'></script>
   </head>
@@ -10,31 +9,45 @@
     <h1><%= title %></h1>
     <p>Welcome to <%= title %></p>
     <div id='chatbox'>
-        
+
     </div>
-    <form id='message-form'>
+    <div id='message-form'>
         <input type='text' id='chat-message'></input>
-        <input type='submit' value='Send'></input>    
-    </form>
+        <div class='btn' id='message-form-submit'>Send</div>
+    </div>
   </body>
-  
+
 <script>
-  var chatClient = new ChatClient()
-  
-  $('#message-form').submit(function(){
-    var message = $('#chat-message').val()
-    chatClient.publish({message: message})
-    this.reset()
-    return false
-  })
+  var chatClient = new ChatClient();
+  var messageTextBox = document.getElementById("chat-message");
+  var submitButton = document.getElementById("message-form-submit");
+
+  var submitCallback = function() {
+    // When user clicks submit, post message to the server, clear text box
+    var message = messageTextBox.value;
+    chatClient.publish({message: message});
+    messageTextBox.value = "";
+  };
+
+  messageTextBox.addEventListener('keydown', function(e) {
+    console.log("abfeqibqb");
+    if (e.key === 'Enter') {
+      submitCallback();
+    }
+  });
+  submitButton.addEventListener('click', submitCallback);
 
   chatClient.subscribe(function(data){
-    console.log(data.message)
-    var newMessage = $('<p></p>').html(data.message)
-    $('#chatbox').append(newMessage)
-  })
+    // On new message, append the new message to the end of the chat list
+    //
+    console.log(data);
+    console.log(data.message);
+    var newMessageEl = document.createElement("div");
+    newMessageEl.className = "chat-bubble";
+    newMessageEl.innerHTML = `<b>IP ${data.ip}</b> <p>${data.message}</p>`;
+    document.getElementById("chatbox").appendChild(newMessageEl);
+  });
 
-  $('#chat-message').focus()
-</script
+</script>
 
 </html>

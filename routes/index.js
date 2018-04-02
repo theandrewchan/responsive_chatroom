@@ -4,8 +4,8 @@ var router = express.Router();
 module.exports = function(messageBus){
 
     setInterval(function(){
-        console.log(messageBus.listeners('message').length)
-        console.log(messageBus._events)
+        //console.log(messageBus.listeners('message').length)
+        //console.log(messageBus._events)
     }, 1000)
 
     /* GET home page. */
@@ -23,8 +23,11 @@ module.exports = function(messageBus){
     })
 
     router.post('/messages', function(req, res){
-        messageBus.emit('message', req.body)
-        res.status(200).end()
+        var newMessage = { message: req.body.message, ip: req.ip };
+        console.log(req.body);
+        console.log(newMessage);
+        messageBus.emit('message', newMessage);
+        res.status(200).end();
     })
 
     return router;

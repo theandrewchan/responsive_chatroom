@@ -1,36 +1,40 @@
-function ChatClient(){
-    if (window.WebSocket){
-        transport = ChatClient.WebSocket
-
+function ChatClient() {
+    var useWebSocket = false; // set to TRUE to use websockets if available
+    if (window.WebSocket && useWebSocket){
+        transport = ChatClient.WebSocket;
     } else {
-        var transport = ChatClient.LongPoll
+        var transport = ChatClient.LongPoll;
     }
 
-    transport.setup.call(this)
-    this.subscribe = transport.subscribe
-    this.publish = transport.publish
-
+    transport.setup.call(this);
+    this.subscribe = transport.subscribe;
+    this.publish = transport.publish;
 }
 
 ChatClient.LongPoll = {
+    setup: function() {
+        // no-op
+        return;
+    },
     subscribe: function(callback) {
-        var longPoll = function(){
-            $.ajax({
-                method: 'GET',
-                url: '/messages', 
-                success: function(data){
-                    callback(data)
-                },
-                complete: function(){
-                    longPoll()
-                },
-                timeout: 30000
-            })
+        var longPoll = function() {
+            fetch("/messages").then(function(response) {
+              return response.json();
+            }).then(function(json) {
+              callback(json);
+              longPoll();
+            });
         }
-        longPoll()
+        longPoll();
     },
     publish: function(data) {
-        $.post('/messages', data)
+        fetch("/messages", {
+            method: "POST",
+            body: JSON.stringify(data),
+            headers: {
+              "content-type": "application/json",
+            },
+        });
     }
 }
 
